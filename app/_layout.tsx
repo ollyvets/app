@@ -1,16 +1,17 @@
 import { useEffect } from 'react';
-import { Slot, useRouter, useSegments } from 'expo-router';
+import { Slot, useRouter, useSegments, useRootNavigationState } from 'expo-router'; // Добавлен useRootNavigationState
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthProvider, useAuth } from '../src/features/auth/hooks/useAuth';
+
+import { AuthProvider, useAuth } from '../src/features/auth/context/AuthContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      gcTime: 1000 * 60 * 60 * 24, // Данные живут в кэше 24 часа
+      gcTime: 1000 * 60 * 60 * 24,
     },
   },
 });
@@ -19,25 +20,26 @@ const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
 });
 
-// Шлюз проверки авторизации
 function InitialLayout() {
-  const { session, isLoading } = useAuth();
+  const { isAuthorized } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const navigationState = useRootNavigationState(); // Достаем состояние навигации
 
   useEffect(() => {
-    if (isLoading) return;
+    if (!navigationState?.key) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const timer = setTimeout(() => {
+      if (!isAuthorized && !inAuthGroup) {
+        router.replace('/(auth)/login');
+      } else if (isAuthorized && inAuthGroup) {
+        router.replace('/(app)/home');
+      }
+    }, 1);
 
-    if (!session && !inAuthGroup) {
-      // Нет сессии и пытается зайти в защищенную зону -> на логин
-      router.replace('/(auth)/login');
-    } else if (session && inAuthGroup) {
-      // Есть сессия и сидит на экране логина -> на главную
-      router.replace('/(app)/home');
-    }
-  }, [session, isLoading, segments]);
+    return () => clearTimeout(timer);
+  }, [isAuthorized, segments, navigationState?.key]);
 
   return <Slot />;
 }

@@ -1,0 +1,2 @@
+export EXPO_PACKAGER_PROXY_URL=https://bookish-fortnight-v6wrv7v65x6wf6x6r-8081.app.github.dev/
+npx expo start --lan
