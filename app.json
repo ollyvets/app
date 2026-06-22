@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "ollyvets-mobile",
+    "slug": "ollyvets-mobile",
+    "version": "1.0.0",
+    "scheme": "ollyvets",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    }
+  }
+}
