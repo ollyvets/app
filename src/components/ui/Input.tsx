@@ -60,18 +60,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    minHeight: 50,
+    height: 52,
   },
   input: {
     flex: 1,
     paddingHorizontal: 16,
     fontSize: 16,
-    minHeight: 50,
+    height: '100%', 
   },
   eyeButton: {
     paddingHorizontal: 16,
     justifyContent: 'center',
-    height: '100%',
+    alignItems: 'center',
+    height: '100%', 
   },
   errorText: {
     fontSize: 12,
